@@ -7,9 +7,9 @@
         "Bot",
         "Anime"
     ],
-    "repository":"https://github.com/lostb053/anibot",
-    "website":"https://github.com/lostb053/anibot",
-    "success_url":"https://t.me/lostb053",
+    "repository":"https://github.com/Fazal00007/anibot",
+    "website":"https://github.com/Fazal00007/anibot",
+    "success_url":"https://t.me/Fazal00007",
     "env":{
         "API_ID":{
             "description":"Get this value from https://my.telegram.org"
@@ -62,7 +62,7 @@
     "formation":{
         "worker":{
             "quantity":1,
-            "size":"free"
+            "size":"eco"
         }
     }
 }
