@@ -634,7 +634,7 @@ async def help_dicc_parser(client: Client, cq: CallbackQuery, cdata: dict):
 
 
 @anibot.on_callback_query(filters.regex(pattern=r"hlplist_(.*)"))
-@check_user
+@control_user
 async def help_list_parser(client: Client, cq: CallbackQuery, cdata: dict):
     await cq.answer()
     user = cdata['data'].split("_")[1]
