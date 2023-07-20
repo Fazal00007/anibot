@@ -622,7 +622,6 @@ async def connect_(client: Client, message: Message, mdata: dict):
 
 
 @anibot.on_callback_query(filters.regex(pattern=r"help_(.*)"))
-@control_user
 async def help_dicc_parser(client: Client, cq: CallbackQuery, cdata: dict):
     await cq.answer()
     kek, qry, user = cdata['data'].split("_")
@@ -634,7 +633,6 @@ async def help_dicc_parser(client: Client, cq: CallbackQuery, cdata: dict):
 
 
 @anibot.on_callback_query(filters.regex(pattern=r"hlplist_(.*)"))
-@control_user
 async def help_list_parser(client: Client, cq: CallbackQuery, cdata: dict):
     await cq.answer()
     user = cdata['data'].split("_")[1]
