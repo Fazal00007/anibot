@@ -341,7 +341,7 @@ async def db_cleanup(client: Client, message: Message, mdata: dict):
     filters.command(['start', f'start{BOT_NAME}'], prefixes=trg)
 )
 @control_user
-async def start_(client: Client, message: Message, mdata: dict):
+async def anistart_(client: Client, message: Message, mdata: dict):
     gid = mdata['chat']['id']
     try:
         user = mdata['from_user']['id']
@@ -466,7 +466,7 @@ ID: `{user}`""",
     filters.command(['help', f'help{BOT_NAME}'], prefixes=trg)
 )
 @control_user
-async def help_(client: Client, message: Message, mdata: dict):
+async def anihelp_(client: Client, message: Message, mdata: dict):
     gid = mdata['chat']['id']
     find_gc = await DC.find_one({'_id': gid})
     if find_gc is not None and 'help' in find_gc['cmd_list'].split():
