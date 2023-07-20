@@ -622,7 +622,7 @@ async def connect_(client: Client, message: Message, mdata: dict):
 
 
 @anibot.on_callback_query(filters.regex(pattern=r"help_(.*)"))
-@check_user
+@control_user
 async def help_dicc_parser(client: Client, cq: CallbackQuery, cdata: dict):
     await cq.answer()
     kek, qry, user = cdata['data'].split("_")
