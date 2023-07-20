@@ -131,23 +131,23 @@ CMD = [
     'character',
     'manga',
     'airing',
-    'help',
+    'anihelp',
     'schedule',
     'fillers',
     'top',
-    'reverse',
+    'anireverse',
     'watch',
-    'start',
-    'ping',
+    'anistart',
+    'aniping',
     'flex',
-    'me',
+    'ame',
     'activity',
     'user',
     'favourites',
     'gettags',
-    'quote',
+    'quotes',
     'getgenres',
-    'connect',
+    'aniconnect',
     'browse',
     'studio'
 ]
@@ -155,7 +155,7 @@ CMD = [
 
 @anibot.on_message(
     ~filters.private & filters.command(
-        ['disable', f'disable{BOT_NAME}', 'enable', f'enable{BOT_NAME}'],
+        ['anidisable', f'anidisable{BOT_NAME}', 'anienable', f'anienable{BOT_NAME}'],
         prefixes=trg
     )
 )
@@ -240,7 +240,7 @@ async def en_dis__able_cmd(client: Client, message: Message, mdata: dict):
 
 @anibot.on_message(
     ~filters.private & filters.command(
-        ['disabled', f'disabled{BOT_NAME}'],
+        ['anidisabled', f'anidisabled{BOT_NAME}'],
         prefixes=trg
     )
 )
@@ -260,7 +260,7 @@ f"""List of commands disabled in **{mdata['chat']['title']}**
 
 @anibot.on_message(
     filters.user(OWNER) & filters.command(
-        ['dbcleanup', f'dbcleanup{BOT_NAME}'], prefixes=trg
+        ['anidbcleanup', f'anidbcleanup{BOT_NAME}'], prefixes=trg
     )
 )
 @control_user
@@ -338,17 +338,17 @@ async def db_cleanup(client: Client, message: Message, mdata: dict):
 
 
 @anibot.on_message(
-    filters.command(['anistart', f'start{BOT_NAME}'], prefixes=trg)
+    filters.command(['anistart', f'anistart{BOT_NAME}'], prefixes=trg)
 )
 @control_user
-async def anistart_(client: Client, message: Message, mdata: dict):
+async def start_(client: Client, message: Message, mdata: dict):
     gid = mdata['chat']['id']
     try:
         user = mdata['from_user']['id']
     except KeyError:
         user = 00000000
     find_gc = await DC.find_one({'_id': gid})
-    if find_gc is not None and 'start' in find_gc['cmd_list'].split():
+    if find_gc is not None and 'anistart' in find_gc['cmd_list'].split():
         return
     bot = await client.get_me()
     if gid==user:
@@ -368,7 +368,7 @@ ID: `{user}`""",
             )
         if len(mdata['text'].split())!=1:
             deep_cmd = mdata['text'].split()[1]
-            if deep_cmd=="help":
+            if deep_cmd=="anihelp":
                 await help_(client, message)
                 return
             if deep_cmd=="auth":
@@ -443,9 +443,9 @@ ID: `{user}`""",
                 +f"I'm {bot.first_name} bot and I can help you get info on "
                 +f"Animes, Mangas, Characters, Airings, Schedules, Watch "
                 +f"Orders of Animes, etc."
-                +f"\n\nFor more info send /help in here."
+                +f"\n\nFor more info about anime modules send /anihelp in here."
                 +f"If you wish to use me in a group start me by "
-                +f"/start{BOT_NAME} command after adding me in the group.")
+                +f"/start@{BOT_NAME} command after adding me in the group.")
         )
     else:
         if not await (GROUPS.find_one({"_id": gid})):
@@ -463,13 +463,13 @@ ID: `{user}`""",
 
 
 @anibot.on_message(
-    filters.command(['anihelp', f'help{BOT_NAME}'], prefixes=trg)
+    filters.command(['anihelp', f'anihelp{BOT_NAME}'], prefixes=trg)
 )
 @control_user
-async def anihelp_(client: Client, message: Message, mdata: dict):
+async def help_(client: Client, message: Message, mdata: dict):
     gid = mdata['chat']['id']
     find_gc = await DC.find_one({'_id': gid})
-    if find_gc is not None and 'help' in find_gc['cmd_list'].split():
+    if find_gc is not None and 'anihelp' in find_gc['cmd_list'].split():
         return
     bot_us = (await client.get_me()).username
     try:
@@ -478,7 +478,7 @@ async def anihelp_(client: Client, message: Message, mdata: dict):
         await client.send_message(
             gid,
             text="Click below button for bot help",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Help", url=f"https://t.me/{bot_us}/?start=help")]])
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Help", url=f"https://t.me/{bot_us}/?anistart=anihelp")]])
         )
         return
     buttons = help_btns(id_)
@@ -488,6 +488,7 @@ async def anihelp_(client: Client, message: Message, mdata: dict):
 Use /ping or !ping cmd to check if bot is online
 Use /start or !start cmd to start bot in group or pm
 Use /help or !help cmd to get interactive help on available bot cmds
+Use /anihelp or !anihelp for more info about anime cmds
 Use /feedback cmd to contact bot owner'''
     if id_ in OWNER:
         await client.send_message(gid, text=text, reply_markup=buttons)
@@ -513,7 +514,7 @@ Apart from above shown cmds"""
                     [[
                         InlineKeyboardButton(
                             "Help",
-                            url=f"https://t.me/{bot_us}/?start=help"
+                            url=f"https://t.me/{bot_us}/?anistart=anihelp"
                         )
                     ]]
                 )
@@ -523,10 +524,10 @@ Apart from above shown cmds"""
 @anibot.on_message(
     filters.command(
         [
-            'connect',
-            f'connect{BOT_NAME}',
-            'disconnect',
-            f'disconnect{BOT_NAME}'
+            'aniconnect',
+            f'aniconnect{BOT_NAME}',
+            'anidisconnect',
+            f'anidisconnect{BOT_NAME}'
         ],
         prefixes=trg
     )
@@ -562,21 +563,21 @@ async def connect_(client: Client, message: Message, mdata: dict):
                 gid,
                 text=(
                     "Please provide the channel id you wish to connect!!!"
-                    +"\nExample: /connect -100xxxxxxxxx"
+                    +"\nExample: /aniconnect -100xxxxxxxxx"
                 )
             )
         if not "-100" in channel:
             return await client.send_message(
                 gid, text="Please enter the full channel ID!!!"
             )
-        if  data[0]=='connect':
+        if  data[0]=='aniconnect':
             if (await CC.find_one({"_id": str(channel)})):
                 await client.send_message(
                     gid,
                     text=(
                         "Channel already connected"
                         +"\nIf someone else has access to it who doesn't own "
-                        +"the channel, contact @hanabi_support"
+                        +"the channel, contact @SpiralTechDivision"
                     )
                 )
                 return
@@ -596,7 +597,7 @@ async def connect_(client: Client, message: Message, mdata: dict):
     else:
         k = (await client.get_chat_member(gid, id_)).status
         if k == CHAT_OWNER:
-            if 'connect' in mdata['text']:
+            if 'aniconnect' in mdata['text']:
                 await CC.insert_one({"_id": str(message.chat.id), "usr": id_})
                 await client.send_message(
                     gid, text="Successfully connected the channel"
@@ -641,9 +642,9 @@ async def help_list_parser(client: Client, cq: CallbackQuery, cdata: dict):
     text='''This is a small guide on how to use me
     
 **Basic Commands:**
-Use /ping or !ping cmd to check if bot is online
 Use /start or !start cmd to start bot in group or pm
 Use /help or !help cmd to get interactive help on available bot cmds
+Use /anihelp for anime cmds
 Use /feedback cmd to contact bot owner'''
     await cq.edit_message_text(text=text, reply_markup=buttons)
 
@@ -666,7 +667,7 @@ def help_btns(user):
 
 @anibot.on_message(
     filters.user(OWNER) & filters.command(
-        ['stats', f'stats{BOT_NAME}'],
+        ['anistats', f'anistats{BOT_NAME}'],
         prefixes=trg
     )
 )
@@ -705,7 +706,7 @@ Stats:-
     )
 
 
-@anibot.on_message(filters.command(['ping', f'ping{BOT_NAME}'], prefixes=trg))
+@anibot.on_message(filters.command(['aniping', f'aniping{BOT_NAME}'], prefixes=trg))
 @control_user
 async def pong_(client: Client, message: Message, mdata: dict):
     find_gc = await DC.find_one({'_id': mdata['chat']['id']})
@@ -729,7 +730,7 @@ async def feed_(client: Client, message: Message, mdata: dict):
     await client.send_message(
         mdata['chat']['id'],
         f"For issues or queries please contact "
-        +f"@{owner} or join @hanabi_support"
+        +f"@{owner} or join @SpiralTechDivision"
     )
 
 ###### credits to @NotThatMF on tg since he gave me the code for it ######
@@ -737,7 +738,7 @@ async def feed_(client: Client, message: Message, mdata: dict):
 
 @anibot.on_message(
     filters.command(
-        ['eval', f'eval{BOT_NAME}'], prefixes=trg
+        ['anieval', f'anieval{BOT_NAME}'], prefixes=trg
     ) & filters.user(OWNER)
 )
 @control_user
@@ -875,7 +876,7 @@ async def terminal(client: Client, message: Message, mdata: dict):
 
 @anibot.on_edited_message(
     ~filters.private & filters.command(
-        ['disable', f'disable{BOT_NAME}', 'enable', f'enable{BOT_NAME}'],
+        ['anidisable', f'anidisable{BOT_NAME}', 'anienable', f'anienable{BOT_NAME}'],
         prefixes=trg
     )
 )
@@ -886,7 +887,7 @@ async def en_dis__able_cmd_edit(client: Client, message: Message, mdata: dict):
 
 @anibot.on_edited_message(
     ~filters.private & filters.command(
-        ['disabled', f'disabled{BOT_NAME}'],
+        ['anidisabled', f'anidisabled{BOT_NAME}'],
         prefixes=trg
     )
 )
@@ -896,7 +897,7 @@ async def list_disabled_edit(client: Client, message: Message, mdata: dict):
 
 @anibot.on_edited_message(
     filters.user(OWNER) & filters.command(
-        ['dbcleanup', f'dbcleanup{BOT_NAME}'], prefixes=trg
+        ['anidbcleanup', f'anidbcleanup{BOT_NAME}'], prefixes=trg
     )
 )
 @control_user
@@ -904,14 +905,14 @@ async def db_cleanup_edit(client: Client, message: Message, mdata: dict):
     await db_cleanup(client, message)
 
 @anibot.on_edited_message(
-    filters.command(['start', f'start{BOT_NAME}'], prefixes=trg)
+    filters.command(['anistart', f'anistart{BOT_NAME}'], prefixes=trg)
 )
 @control_user
 async def start_edit(client: Client, message: Message, mdata: dict):
     await start_(client, message)
 
 @anibot.on_edited_message(
-    filters.command(['help', f'help{BOT_NAME}'], prefixes=trg)
+    filters.command(['anihelp', f'anihelp{BOT_NAME}'], prefixes=trg)
 )
 @control_user
 async def help_edit(client: Client, message: Message, mdata: dict):
@@ -920,10 +921,10 @@ async def help_edit(client: Client, message: Message, mdata: dict):
 @anibot.on_edited_message(
     filters.command(
         [
-            'connect',
-            f'connect{BOT_NAME}',
-            'disconnect',
-            f'disconnect{BOT_NAME}'
+            'aniconnect',
+            f'aniconnect{BOT_NAME}',
+            'anidisconnect',
+            f'anidisconnect{BOT_NAME}'
         ],
         prefixes=trg
     )
@@ -934,7 +935,7 @@ async def connect_edit(client: Client, message: Message, mdata: dict):
 
 @anibot.on_edited_message(
     filters.user(OWNER) & filters.command(
-        ['stats', f'stats{BOT_NAME}'], prefixes=trg
+        ['anistats', f'anistats{BOT_NAME}'], prefixes=trg
     )
 )
 @control_user
@@ -942,7 +943,7 @@ async def stats_edit(client: Client, message: Message, mdata: dict):
     await stats_(client, message)
 
 @anibot.on_edited_message(
-    filters.command(['ping', f'ping{BOT_NAME}'], prefixes=trg)
+    filters.command(['aniping', f'aniping{BOT_NAME}'], prefixes=trg)
 )
 @control_user
 async def pong_edit(client: Client, message: Message, mdata: dict):
@@ -959,7 +960,7 @@ async def feed_edit(client: Client, message: Message, mdata: dict):
 
 @anibot.on_edited_message(
     filters.command(
-        ['eval', f'eval{BOT_NAME}'], prefixes=trg
+        ['anieval', f'anieval{BOT_NAME}'], prefixes=trg
     ) & filters.user(OWNER)
 )
 @control_user
