@@ -131,13 +131,13 @@ CMD = [
     'character',
     'manga',
     'airing',
-    'help',
+    'anihelp',
     'schedule',
     'fillers',
     'top',
     'reverse',
     'watch',
-    'start',
+    'anistart',
     'ping',
     'flex',
     'me',
@@ -268,7 +268,7 @@ async def db_cleanup(client: Client, message: Message, mdata: dict):
     count = 0
     entries = ""
     st = datetime.now()
-    x = await message.reply_text("Starting database cleanup in 5 seconds")
+    x = await message.reply_text("anistarting database cleanup in 5 seconds")
     et = datetime.now()
     pt = (et-st).microseconds / 1000
     await asyncio.sleep(5)
@@ -341,14 +341,14 @@ async def db_cleanup(client: Client, message: Message, mdata: dict):
     filters.command(['anistart', f'anistart{BOT_NAME}'], prefixes=trg)
 )
 @control_user
-async def start_(client: Client, message: Message, mdata: dict):
+async def anistart_(client: Client, message: Message, mdata: dict):
     gid = mdata['chat']['id']
     try:
         user = mdata['from_user']['id']
     except KeyError:
         user = 00000000
     find_gc = await DC.find_one({'_id': gid})
-    if find_gc is not None and 'start' in find_gc['cmd_list'].split():
+    if find_gc is not None and 'anistart' in find_gc['cmd_list'].split():
         return
     bot = await client.get_me()
     if gid==user:
@@ -360,7 +360,7 @@ async def start_(client: Client, message: Message, mdata: dict):
             await USERS.insert_one({"id": user, "user": usertitle})
             await clog(
                 "ANIBOT",
-f"""New User started bot
+f"""New User anistarted bot
 
 <a url="tg://user?id={user}">{usertitle}</a>
 ID: `{user}`""",
@@ -368,8 +368,8 @@ ID: `{user}`""",
             )
         if len(mdata['text'].split())!=1:
             deep_cmd = mdata['text'].split()[1]
-            if deep_cmd=="help":
-                await help_(client, message)
+            if deep_cmd=="anihelp":
+                await anihelp_(client, message)
                 return
             if deep_cmd=="auth":
                 await auth_link_cmd(client, message)
@@ -440,12 +440,12 @@ ID: `{user}`""",
             gid,
             text=(
                 f"Kon'nichiwa!!!\n"
-                +f"I'm {bot.first_name} bot and I can help you get info on "
+                +f"I'm {bot.first_name} bot and I can anihelp you get info on "
                 +f"Animes, Mangas, Characters, Airings, Schedules, Watch "
                 +f"Orders of Animes, etc."
-                +f"\n\nFor more info send /help in here."
-                +f"If you wish to use me in a group start me by "
-                +f"/start{BOT_NAME} command after adding me in the group.")
+                +f"\n\nFor more info send /anihelp in here."
+                +f"If you wish to use me in a group anistart me by "
+                +f"/anistart{BOT_NAME} command after adding me in the group.")
         )
     else:
         if not await (GROUPS.find_one({"_id": gid})):
@@ -466,10 +466,10 @@ ID: `{user}`""",
     filters.command(['anihelp', f'anihelp{BOT_NAME}'], prefixes=trg)
 )
 @control_user
-async def help_(client: Client, message: Message, mdata: dict):
+async def anihelp_(client: Client, message: Message, mdata: dict):
     gid = mdata['chat']['id']
     find_gc = await DC.find_one({'_id': gid})
-    if find_gc is not None and 'help' in find_gc['cmd_list'].split():
+    if find_gc is not None and 'anihelp' in find_gc['cmd_list'].split():
         return
     bot_us = (await client.get_me()).username
     try:
@@ -477,17 +477,17 @@ async def help_(client: Client, message: Message, mdata: dict):
     except KeyError:
         await client.send_message(
             gid,
-            text="Click below button for bot help",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Help", url=f"https://t.me/{bot_us}/?anistart=anihelp")]])
+            text="Click below button for bot anihelp",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("anihelp", url=f"https://t.me/{bot_us}/?anistart=anihelp")]])
         )
         return
-    buttons = help_btns(id_)
+    buttons = anihelp_btns(id_)
     text='''This is a small guide on how to use me
     
 **Basic Commands:**
 Use /ping or !ping cmd to check if bot is online
-Use /start or !start cmd to start bot in group or pm
-Use /help or !help cmd to get interactive help on available bot cmds
+Use /anistart or !anistart cmd to anistart bot in group or pm
+Use /anihelp or !anihelp cmd to get interactive anihelp on available bot cmds
 Use /feedback cmd to contact bot owner'''
     if id_ in OWNER:
         await client.send_message(gid, text=text, reply_markup=buttons)
@@ -508,11 +508,11 @@ Apart from above shown cmds"""
         else:
             await client.send_message(
                 gid,
-                text="Click below button for bot help",
+                text="Click below button for bot anihelp",
                 reply_markup=InlineKeyboardMarkup(
                     [[
                         InlineKeyboardButton(
-                            "Help",
+                            "anihelp",
                             url=f"https://t.me/{bot_us}/?anistart=anihelp"
                         )
                     ]]
@@ -609,7 +609,7 @@ async def connect_(client: Client, message: Message, mdata: dict):
             return
         await client.send_message(
             gid,
-            text="Click below button for bot help",
+            text="Click below button for bot anihelp",
             reply_markup=InlineKeyboardMarkup(
                 [[
                     InlineKeyboardButton(
@@ -620,12 +620,12 @@ async def connect_(client: Client, message: Message, mdata: dict):
         )
 
 
-@anibot.on_callback_query(filters.regex(pattern=r"help_(.*)"))
+@anibot.on_callback_query(filters.regex(pattern=r"anihelp_(.*)"))
 @check_user
-async def help_dicc_parser(client: Client, cq: CallbackQuery, cdata: dict):
+async def anihelp_dicc_parser(client: Client, cq: CallbackQuery, cdata: dict):
     await cq.answer()
     kek, qry, user = cdata['data'].split("_")
-    text = HELP_DICT[qry]
+    text = anihelp_DICT[qry]
     btn = InlineKeyboardMarkup(
         [[InlineKeyboardButton("Back", callback_data=f"hlplist_{user}")]]
     )
@@ -634,27 +634,27 @@ async def help_dicc_parser(client: Client, cq: CallbackQuery, cdata: dict):
 
 @anibot.on_callback_query(filters.regex(pattern=r"hlplist_(.*)"))
 @check_user
-async def help_list_parser(client: Client, cq: CallbackQuery, cdata: dict):
+async def anihelp_list_parser(client: Client, cq: CallbackQuery, cdata: dict):
     await cq.answer()
     user = cdata['data'].split("_")[1]
-    buttons = help_btns(user)
+    buttons = anihelp_btns(user)
     text='''This is a small guide on how to use me
     
 **Basic Commands:**
 Use /ping or !ping cmd to check if bot is online
-Use /start or !start cmd to start bot in group or pm
-Use /help or !help cmd to get interactive help on available bot cmds
+Use /anistart or !anistart cmd to anistart bot in group or pm
+Use /anihelp or !anihelp cmd to get interactive anihelp on available bot cmds
 Use /feedback cmd to contact bot owner'''
     await cq.edit_message_text(text=text, reply_markup=buttons)
 
 
-def help_btns(user):
+def anihelp_btns(user):
     but_rc = []
     buttons = []
-    hd_ = list(natsorted(HELP_DICT.keys()))
+    hd_ = list(natsorted(anihelp_DICT.keys()))
     for i in hd_:
         but_rc.append(
-            InlineKeyboardButton(i, callback_data=f"help_{i}_{user}")
+            InlineKeyboardButton(i, callback_data=f"anihelp_{i}_{user}")
         )
         if len(but_rc)==2:
             buttons.append(but_rc)
@@ -904,18 +904,18 @@ async def db_cleanup_edit(client: Client, message: Message, mdata: dict):
     await db_cleanup(client, message)
 
 @anibot.on_edited_message(
-    filters.command(['start', f'start{BOT_NAME}'], prefixes=trg)
+    filters.command(['anistart', f'anistart{BOT_NAME}'], prefixes=trg)
 )
 @control_user
-async def start_edit(client: Client, message: Message, mdata: dict):
-    await start_(client, message)
+async def anistart_edit(client: Client, message: Message, mdata: dict):
+    await anistart_(client, message)
 
 @anibot.on_edited_message(
-    filters.command(['help', f'help{BOT_NAME}'], prefixes=trg)
+    filters.command(['anihelp', f'anihelp{BOT_NAME}'], prefixes=trg)
 )
 @control_user
-async def help_edit(client: Client, message: Message, mdata: dict):
-    await help_(client, message)
+async def anihelp_edit(client: Client, message: Message, mdata: dict):
+    await anihelp_(client, message)
 
 @anibot.on_edited_message(
     filters.command(
