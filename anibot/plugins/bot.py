@@ -513,7 +513,7 @@ Apart from above shown cmds"""
                     [[
                         InlineKeyboardButton(
                             "Help",
-                            url=f"https://t.me/{bot_us}/?start=help"
+                            url=f"https://t.me/{bot_us}/?anistart=anihelp"
                         )
                     ]]
                 )
